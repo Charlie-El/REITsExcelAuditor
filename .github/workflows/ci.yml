@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: python -m pip install -e ".[dev]"
+
+      - name: Private file scan
+        run: python scripts/check_private_files.py
+
+      - name: Compile sources
+        run: python -m py_compile reit_excel_auditor/app.py reit_excel_auditor/transformer.py scripts/check_private_files.py
+
+      - name: Run tests
+        run: python -m pytest

@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+.Python
+.venv/
+venv/
+env/
+
+# Build outputs
+build/
+dist/
+*.spec
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+*.orig
+~$*
+
+# Local/private Excel data
+*待审核*.xls*
+*自动审核*.xls*
+*批量汇总*.xls*
+*补全信息*.xls*
+!examples/metadata_template.xlsx
+
+# Office lock files
+~$*.xlsx
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reits-excel-auditor"
+version = "1.0.0"
+description = "Desktop and CLI tool for converting REITs Excel workbooks into standardized audit-ready templates."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "openpyxl>=3.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pyinstaller>=6.0.0",
+]
+build = [
+    "pyinstaller>=6.0.0",
+]
+
+[tool.setuptools]
+packages = ["reit_excel_auditor"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
