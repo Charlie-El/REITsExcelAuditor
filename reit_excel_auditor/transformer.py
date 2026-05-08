@@ -208,6 +208,7 @@ PROPERTY_PROCESSED_NUMERIC_HEADERS = {
     "租金单价(单位:元/月/平方米or元/月/个)",
     "报告期末平均剩余租期(天)",
 }
+NON_DATA_PLACEHOLDERS = {"文档章节未提及"}
 
 
 @dataclass
@@ -1361,6 +1362,9 @@ def normalize_property_processed_values(worksheet: Any, header_row: int, headers
 
         for col_idx, header in enumerate(headers, 1):
             cell = worksheet.cell(row_idx, col_idx)
+            if is_non_data_placeholder(cell.value):
+                cell.value = None
+                continue
             if is_blank(cell.value):
                 continue
             if header in PROPERTY_PROCESSED_YYYYMMDD_DATE_HEADERS:
@@ -1523,7 +1527,13 @@ def normalize_header(value: Any) -> str:
 
 
 def is_blank(value: Any) -> bool:
-    return value is None or (isinstance(value, str) and value.strip() == "")
+    return value is None or (isinstance(value, str) and value.strip() == "") or is_non_data_placeholder(value)
+
+
+def is_non_data_placeholder(value: Any) -> bool:
+    if not isinstance(value, str):
+        return False
+    return normalize_header(value) in NON_DATA_PLACEHOLDERS
 
 
 def normalize_code(value: Any, keep_suffix: bool = False) -> Any:

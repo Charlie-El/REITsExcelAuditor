@@ -93,6 +93,7 @@ def create_property_source_workbook(path: Path) -> None:
             "主配套资产名称",
             "主配套资产单项可出租面积(平方米)",
             "主配套资产合计的可出租面积(平方米)",
+            "主配套资产可出租数量(个/间/套)",
             "主配套资产单项实际出租面积(平方米)",
             "主配套资产合计的实际出租面积(平方米)",
             "出租率",
@@ -100,7 +101,7 @@ def create_property_source_workbook(path: Path) -> None:
             "租金单价(单位:元/月/平方米or元/月/个)",
         ]
     )
-    worksheet.append(["180301.SZ", "项目A", "主要资产", None, 100, None, 80, None, 0.9, 1.05, 10])
+    worksheet.append(["180301.SZ", "项目A", "主要资产", None, 100, None, "文档章节未提及", 80, None, 0.9, 1.05, 10])
     worksheet.freeze_panes = "A2"
     workbook.save(path)
     workbook.close()
@@ -127,12 +128,16 @@ def test_property_processed_output_can_be_enabled(tmp_path: Path) -> None:
     assert any("已按选项输出处理版" in warning for warning in result.warnings)
     workbook = load_workbook(processed_files[0])
     worksheet = workbook.active
+    headers = [worksheet.cell(1, col_idx).value for col_idx in range(1, worksheet.max_column + 1)]
+    rentable_count_col = headers.index("主配套资产可出租数量(个/间/套)") + 1
+    rentable_count = worksheet.cell(2, rentable_count_col).value
     workbook.close()
 
     with ZipFile(processed_files[0]) as archive:
         sheet_xml = archive.read("xl/worksheets/sheet1.xml").decode("utf-8")
 
     assert worksheet.freeze_panes is None
+    assert rentable_count is None
     assert "<pane" not in sheet_xml
     assert "pane=" not in sheet_xml
 
