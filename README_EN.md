@@ -88,11 +88,11 @@ If an output field cannot be filled automatically, the summary workbook records 
 
 | Type | Input Workbook | Output Format |
 | --- | --- | --- |
-| Type 1 | Basic asset valuation workbook | Basic asset valuation |
-| Type 2 | Traffic infrastructure operation indicators workbook | Expressway operation data |
-| Type 3 | Basic asset financial indicators workbook, prospectus asset financial indicators workbook | Assets, liabilities, revenue, and cost |
-| Type 4 | Basic asset operation indicators workbook | Property operation data, with optional processed output |
-| Type 5 | Energy infrastructure operation indicators workbook | Energy operation data |
+| Type&nbsp;1 | Basic asset valuation workbook | Basic asset valuation |
+| Type&nbsp;2 | Traffic infrastructure operation indicators workbook | Expressway operation data |
+| Type&nbsp;3 | Basic asset financial indicators workbook, prospectus asset financial indicators workbook | Assets, liabilities, revenue, and cost |
+| Type&nbsp;4 | Basic asset operation indicators workbook | Property operation data, with optional processed output |
+| Type&nbsp;5 | Energy infrastructure operation indicators workbook | Energy operation data |
 
 The tool identifies workbook types mainly from header fields, not just from file names.
 
