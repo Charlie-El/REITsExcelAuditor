@@ -10,4 +10,4 @@ paddlepaddle>=2.6.0
 
 # Alternative OCR backend. It also requires installing the Tesseract executable separately.
 pytesseract>=0.3.13
-Pillow>=10.0.0
+pillow>=10.0.0
