@@ -6,15 +6,15 @@ from zipfile import ZipFile
 
 from openpyxl import Workbook, load_workbook
 
-from reit_excel_auditor.transformer import convert_file
+from reit_excel_auditor.transformer import convert_file, find_standard_template_path
 from scripts.check_private_files import find_private_files
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_metadata_template_headers_are_readable() -> None:
-    workbook = load_workbook(PROJECT_ROOT / "examples" / "metadata_template.xlsx")
+def test_metadata_helper_template_headers_are_readable() -> None:
+    workbook = load_workbook(PROJECT_ROOT / "examples" / "自动审核补全信息表模板.xlsx")
     worksheet = workbook.active
     headers = [worksheet.cell(1, col_idx).value for col_idx in range(1, 7)]
     creator = workbook.properties.creator
@@ -27,6 +27,50 @@ def test_metadata_template_headers_are_readable() -> None:
     assert active_cell == "A1"
 
 
+def test_annual_update_helper_templates_are_readable() -> None:
+    expected_headers = {
+        "年度更新_标准导入表模板.xlsx": (1, ["REITs代码", "REITs名称", "基础设施项目类型", "底层资产性质"]),
+        "年度更新_统一补充大表模板.xlsx": (2, ["REITs代码", "REITs名称", "基础设施项目类型", "底层资产性质"]),
+        "年度更新_管理费率辅助表模板.xlsx": (1, ["REITs代码", "REITs名称", "项目名称", "底层资产性质"]),
+        "年度更新_评估价值与资产性质辅助表模板.xlsx": (1, ["REITs代码", "REITs名称", "项目名称", "底层资产性质"]),
+        "年度更新_残值参数辅助表模板.xlsx": (1, ["REITs代码", "REITs名称", "项目名称", "残值年度"]),
+        "年度更新_公告日期辅助表模板.xlsx": (1, ["REITs代码", "REITs名称", "项目名称", "公告日期"]),
+        "年度更新_项目别名映射表模板.xlsx": (1, ["REITs代码", "REITs名称", "原项目名称", "标准项目名称"]),
+        "年度更新_基金净资产与折旧摊销参考表模板.xlsx": (1, ["代码", "基金名称", "匹配PDF", "基金净资产(万元)"]),
+    }
+    template_dir = PROJECT_ROOT / "examples" / "annual_update_helper_templates"
+
+    for filename, (header_row, leading_headers) in expected_headers.items():
+        workbook = load_workbook(template_dir / filename)
+        worksheet = workbook["填写模板"]
+        headers = [worksheet.cell(header_row, col_idx).value for col_idx in range(1, len(leading_headers) + 1)]
+        creator = workbook.properties.creator
+        active_cell = worksheet.sheet_view.selection[0].activeCell
+        workbook.close()
+
+        assert headers == leading_headers
+        assert creator == "REITsExcelAuditor"
+        assert active_cell == "A1"
+
+
+def test_annual_update_output_templates_are_readable() -> None:
+    template_dir = PROJECT_ROOT / "standard_templates" / "annual_update"
+    expected = {
+        "产权年报提取模板.xlsx": ("sheet", "A4"),
+        "特许经营权年报提取模板.xlsx": ("Sheet1", "A4"),
+        "未来现金流模板.xlsx": ("Sheet1", "A2"),
+    }
+
+    for filename, (sheet_name, freeze_panes) in expected.items():
+        workbook = load_workbook(template_dir / filename)
+        worksheet = workbook[sheet_name]
+        workbook.close()
+
+        assert worksheet.freeze_panes == freeze_panes
+        assert worksheet.max_row >= 2
+        assert worksheet.max_column >= 14
+
+
 def test_config_template_files_exist() -> None:
     config = json.loads((PROJECT_ROOT / "config" / "table_templates.json").read_text(encoding="utf-8"))
 
@@ -37,21 +81,25 @@ def test_config_template_files_exist() -> None:
         "property": "04-产权经营数据标准模板.xlsx",
         "energy": "05-能源经营数据标准模板.xlsx",
     }
-    for template_name in config.values():
-        assert (PROJECT_ROOT / "standard_templates" / template_name).exists()
+    for table_type, template_name in config.items():
+        template_path = find_standard_template_path(table_type)
+        assert template_path is not None
+        assert template_path.name == template_name
 
 
 def test_standard_template_filters_only_cover_header_columns() -> None:
     expected_filters = {
-        "01-基础资产估值标准模板.xlsx": (None, 7),
-        "02-高速经营数据标准模板.xlsx": ("A1:I1", 9),
-        "03-资产负债收入成本标准模板.xlsx": ("A1:M1", 13),
-        "04-产权经营数据标准模板.xlsx": (None, 10),
-        "05-能源经营数据标准模板.xlsx": ("A1:J1", 10),
+        "valuation": (None, 7),
+        "traffic": ("A1:I1", 9),
+        "finance": ("A1:M1", 13),
+        "property": (None, 10),
+        "energy": ("A1:J1", 10),
     }
 
-    for template_name, (expected_filter, expected_column_count) in expected_filters.items():
-        workbook = load_workbook(PROJECT_ROOT / "standard_templates" / template_name)
+    for table_type, (expected_filter, expected_column_count) in expected_filters.items():
+        template_path = find_standard_template_path(table_type)
+        assert template_path is not None
+        workbook = load_workbook(template_path)
         worksheet = workbook.active
         creator = workbook.properties.creator
         actual_filter = worksheet.auto_filter.ref
@@ -80,6 +128,15 @@ def test_private_file_scan_flags_local_desktop_paths(tmp_path: Path) -> None:
     notes.write_text(f"local file is {local_path}", encoding="utf-8")
 
     assert find_private_files(tmp_path) == [notes]
+
+
+def test_private_file_scan_flags_function_workspace(tmp_path: Path) -> None:
+    private_dir = tmp_path / "function"
+    private_dir.mkdir()
+    private_workbook = private_dir / "年报样例.xlsx"
+    private_workbook.write_text("private", encoding="utf-8")
+
+    assert find_private_files(tmp_path) == [private_workbook]
 
 
 def create_property_source_workbook(path: Path) -> None:

@@ -1,0 +1,13 @@
+# Optional local OCR engines.
+# RapidOCR is recommended as the default free local OCR engine for Chinese financial
+# report screenshots and image-only PDFs. It is lighter than PaddleOCR and easier
+# to package in a Windows exe.
+rapidocr-onnxruntime>=1.4.4
+
+# Alternative high-accuracy OCR backend. It is larger and may increase exe size.
+paddleocr>=2.7.0
+paddlepaddle>=2.6.0
+
+# Alternative OCR backend. It also requires installing the Tesseract executable separately.
+pytesseract>=0.3.13
+Pillow>=10.0.0

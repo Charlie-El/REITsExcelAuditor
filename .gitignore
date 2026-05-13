@@ -1,35 +1,65 @@
-# Python
+# Python cache and virtual environments
 __pycache__/
 *.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .Python
 .venv/
 venv/
 env/
 
-# Build outputs
+# Build and release outputs
 build/
 dist/
 *.spec
 
-# Logs and temp files
+# Logs and temporary files
 *.log
 *.tmp
 *.bak
 *.orig
 ~$*
 
-# Local/private Excel data
-*待审核*.xls*
-*自动审核*.xls*
-*批量汇总*.xls*
-*补全信息*.xls*
-!examples/metadata_template.xlsx
-
-# Office lock files
-~$*.xlsx
-
-# OS/editor files
+# OS and editor files
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/
+
+# Local/private workspaces
+function/
+测试/
+REITsExcelAuditor-main/
+validation_unified_mock/
+模拟统一补充大表验证/
+
+# Generated or private Excel outputs
+*待审核*.xls*
+*自动审核*.xls*
+*批量汇总*.xls*
+*结果汇总与复核清单*.xls*
+*人工复核清单*.xls*
+*更新计划预览*.xls*
+*输出对比检查*.xls*
+*AI调用记录*.xls*
+*OCR原始识别结果*.xls*
+*未来现金流汇总表*.xls*
+*基金净资产与折旧摊销提取表*.xls*
+*自动更新*.xls*
+
+# Public template workbooks that should stay tracked
+!examples/
+!examples/自动审核补全信息表模板.xlsx
+!examples/annual_update_helper_templates/
+!examples/annual_update_helper_templates/*.xlsx
+!standard_templates/
+!standard_templates/excel_conversion/
+!standard_templates/excel_conversion/*.xlsx
+!standard_templates/annual_update/
+!standard_templates/annual_update/*.xlsx
+
+# Local checked/reference workbooks that must not be committed
+/产权-已核_年报提取.xlsx
+/特许经营权-已核_年报提取.xlsx
+/202604reits未来现金流.xlsx

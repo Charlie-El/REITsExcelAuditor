@@ -1058,10 +1058,26 @@ def find_standard_template_path(table_type: str) -> Path | None:
 
     for base in candidate_resource_bases():
         for template_dir_name in STANDARD_TEMPLATE_DIR_NAMES:
+            template_dir = base / template_dir_name
+            if not template_dir.exists():
+                continue
             for template_name in template_names:
-                path = base / template_dir_name / template_name
-                if path.exists():
+                path = find_template_file(template_dir, template_name)
+                if path is not None:
                     return path
+    return None
+
+
+def find_template_file(template_dir: Path, template_name: str) -> Path | None:
+    direct_path = template_dir / template_name
+    if direct_path.exists():
+        return direct_path
+
+    # Keep config files simple: a plain filename can live in a feature subfolder.
+    template_filename = Path(template_name).name
+    for candidate in sorted(template_dir.rglob(template_filename)):
+        if candidate.is_file():
+            return candidate
     return None
 
 
