@@ -48,8 +48,6 @@ To include the local OCR engine:
 .\build_exe.ps1 -WithOCR
 ```
 
-For GitHub Releases, use a release title such as `REITsExcelAuditor vX.Y.Z` and upload `dist\REITsExcelAuditor.exe`.
-
 ## Desktop Workflow
 
 1. Choose an input Excel file or folder.
@@ -157,7 +155,7 @@ Annual output formatting is controlled by the desensitized templates in `standar
 
 Most users do not need to edit these files.
 
-## Before Publishing
+## Before Large-Scale Use
 
 Run:
 
@@ -166,7 +164,7 @@ python -m pytest
 python scripts\check_private_files.py
 ```
 
-Do not commit real business data, annual report PDFs, OCR images, generated output workbooks, temporary validation folders, local paths, or secrets. Upload only `dist\REITsExcelAuditor.exe` as the release asset when publishing a binary release.
+Make sure real business data, annual report PDFs, OCR images, generated output workbooks, temporary validation folders, local paths, or secrets are not mixed into the working tree.
 
 ## Copyright
 

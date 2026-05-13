@@ -57,8 +57,6 @@ dist\REITsExcelAuditor.exe
 .\build_exe.ps1 -WithOCR
 ```
 
-发布 GitHub Release 时，建议 release 标题写成 `REITsExcelAuditor v版本号`，附件上传 `dist\REITsExcelAuditor.exe`。`build\` 是打包中间目录，不需要发布。
-
 ## 图形界面操作
 
 1. 选择输入文件或输入文件夹。
@@ -264,16 +262,16 @@ standard_templates\
 
 这些模板用于保留输出 Excel 的表头、列宽、字体、边框、筛选范围、颜色布局和数字格式。更换模板时，请保留正确表头和格式。
 
-## 发布前检查
+## 使用前检查
 
-发布到 GitHub 前建议运行：
+批量处理真实业务数据前建议运行：
 
 ```powershell
 python -m pytest
 python scripts\check_private_files.py
 ```
 
-确认没有把真实业务数据、年报 PDF、OCR 图片、输出结果、临时过程目录、本地路径或密钥提交到仓库。Release 附件可以上传 `dist\REITsExcelAuditor.exe`，源码仓库不需要提交 `build\`、`dist\`、真实 Excel 数据或本地验证输出。
+确认没有把真实业务数据、年报 PDF、OCR 图片、输出结果、临时过程目录、本地路径或密钥混入当前工作目录。
 
 ## 常见提示
 
